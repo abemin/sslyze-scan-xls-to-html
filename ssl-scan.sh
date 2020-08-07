@@ -1,56 +1,26 @@
 #! /bin/bash
 
-################################################################################
-# Help                                                                         #
-################################################################################
-Help()
-{
-   # Display Help
-   echo
-   echo "Syntax: ./ssl-scan.sh [ -h | i | o ]"
-   echo "options:"
-   echo "h     Print this Help."
-   echo "i     host name."
-   echo "o     output filename."
-   echo
-}
-
-################################################################################
-################################################################################
-# Main program                                                                 #
-################################################################################
-################################################################################
-
-while getopts ":h" option; do
-   case $option in
-      h) # display Help
-         Help
-         exit;;
-      i) hostname=${OPTARG};;
-      o) output=${OPTARG};;
-     \?) # incorrect option
-         echo "Error: Invalid option"
-         exit;;
-   esac
+while getopts ":h:o:" opt; do
+  case ${opt} in
+    h ) hostname=$OPTARG
+      ;;
+    o ) output=$OPTARG
+      ;;
+    \? ) echo
+   	 echo "Syntax: ./ssl-scan.sh [ -i | -o ]"
+   	 echo "options:"
+   	 echo "i     host name."
+   	 echo "o     output filename."
+   	 echo "Example Usage: ./ssl-scan.sh -h www.google.com -o google"
+      ;;
+     : )
+         echo "Invalid Option: -$OPTARG requires an argument" 1>&2
+	 echo "Example Usage: ./ssl-scan.sh -h www.google.com -o google"
+         exit 1
+         ;;
+  esac
 done
-
-if [ $# -eq 0 ]
-  then
-      echo
-      echo "Syntax: ./ssl-scan.sh [ -h | i | o ]"
-      echo "options:"
-      echo "h     Print this Help."
-      echo "i     host name."
-      echo "o     output filename."
-      echo
-fi
-
-echo "   __________ __        _____ _________    _   __"
-echo "  / ___/ ___// /       / ___// ____/   |  / | / /"
-echo "  \__ \\__ \/ /  ______\__ \/ /   / /| | /  |/ / "
-echo " ___/ /__/ / /__/_____/__/ / /___/ ___ |/ /|  /  "
-echo "/____/____/_____/    /____/\____/_/  |_/_/ |_/   "
-                                                 
+shift $((OPTIND -1))
 
 python2 -m sslyze --regular --xml_out=/dev/stdout --quiet $hostname:443 | xsltproc sslyze.xsl - > $output.html
 
