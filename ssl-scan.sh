@@ -6,7 +6,6 @@
 Help()
 {
    # Display Help
-   echo "Add description of the script functions here."
    echo
    echo "Syntax: ./ssl-scan.sh [ -h | i | o ]"
    echo "options:"
@@ -34,6 +33,17 @@ while getopts ":h" option; do
          exit;;
    esac
 done
+
+if [ $# -eq 0 ]
+  then
+      echo
+      echo "Syntax: ./ssl-scan.sh [ -h | i | o ]"
+      echo "options:"
+      echo "h     Print this Help."
+      echo "i     host name."
+      echo "o     output filename."
+      echo
+fi
 
 echo "   __________ __        _____ _________    _   __"
 echo "  / ___/ ___// /       / ___// ____/   |  / | / /"
